@@ -4,7 +4,7 @@
  *
  */
 
-import { DEFAULT_ACTION, GET_ALL_TASKS,ADD_NEW_TASK } from './constants';
+import { DEFAULT_ACTION, GET_ALL_TASKS,ADD_NEW_TASK, DELETE_TASK } from './constants';
 // import { ADD_NEW_TASK } from './constants';
 
 export function defaultAction() {
@@ -25,7 +25,19 @@ export function fetchTasksAction(data) {
 export function addNewTaskAction(data){
   console.log("Got new task",data);
   return {
-    type:ADD_NEW_TASK,
+    type: ADD_NEW_TASK,
     data
   };
+}
+
+export function deleteTaskAction(data){
+  console.log("Delete the task",data);
+  return {
+    type: DELETE_TASK,
+    data
+  }
+}
+
+export function testAction(data){
+  console.log('Tast action',)
 }

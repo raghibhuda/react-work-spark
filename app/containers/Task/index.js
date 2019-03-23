@@ -5,21 +5,17 @@
  */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-// import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 import { Button , Jumbotron ,Form , FormGroup ,Input ,Table} from 'reactstrap';
 import makeSelectTask from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import messages from './messages';
-import { fetchTasksAction, addNewTaskAction } from './actions';
+import { fetchTasksAction, addNewTaskAction, deleteTaskAction } from './actions';
 
 
 /* eslint-disable react/prefer-stateless-function */
@@ -27,7 +23,8 @@ export class Task extends React.Component {
   constructor(){
     super();
     this.state = {
-      name: ''
+      name: '',
+      id: null,
     };
     
   }
@@ -38,26 +35,24 @@ export class Task extends React.Component {
     });
   }
   
-  addTaskSubmit = (e) =>{
+  addTaskSubmit = (e) => {
     e.preventDefault();
     let data ={
       name: this.state.name,
     }
     this.props.addNewTask(data);
-    // this.props.task;
+    this.props.showTasks(this.props.task.tasks);
     this.setState({
       name: ""
     });
   }
 
-  test = () =>{
-    this.props.task.tasks.map((data,key) => {
-      console.log(data.id);
-      // console.log(key);
-
-    });
+  handleTaskDelete = (e) => {
+    let id = e.target.value;
+    this.props.deleteATask(id);
   }
-  
+  ///All task render UI
+
   renderTasks = () => {
     return this.props.task.tasks.map((data,key) => {
       return (
@@ -65,15 +60,16 @@ export class Task extends React.Component {
           <td >{data.id}</td>
           <td >{data.name}</td>
           <td >
-            <Button outline color="primary">Edit</Button>
+            <Button outline color="primary" >Edit</Button>
           </td>
           <td>
-            <Button outline color="danger" >Delete</Button>
+            <Button outline color="danger"  value={data.id} onClick={this.handleTaskDelete}>Delete</Button>
           </td>
         </tr>
       )
     });
   } 
+
 
   render() {
     return (
@@ -121,7 +117,8 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     showTasks: (data) => dispatch(fetchTasksAction(data)),
-    addNewTask: (data)=>dispatch(addNewTaskAction(data)),
+    addNewTask: (data) => dispatch(addNewTaskAction(data)),
+    deleteATask: (taskID) => dispatch(deleteTaskAction(taskID)),
   };
 }
 
