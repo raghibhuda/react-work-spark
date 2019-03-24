@@ -41,7 +41,6 @@ export class Task extends React.Component {
       name: this.state.name,
     }
     this.props.addNewTask(data);
-    this.props.showTasks(this.props.task.tasks);
     this.setState({
       name: ""
     });
@@ -52,7 +51,6 @@ export class Task extends React.Component {
     this.props.deleteATask(id);
   }
   ///All task render UI
-
   renderTasks = () => {
     return this.props.task.tasks.map((data,key) => {
       return (
@@ -81,12 +79,11 @@ export class Task extends React.Component {
         <Jumbotron>
           <Form onSubmit={this.addTaskSubmit}>
             <FormGroup>
-              <Input name='name'placeholder="Add a new one" onChange={this.handelTaskNameChange}/>
+              <Input name='name'placeholder="Add a new one" value={this.state.name} onChange={this.handelTaskNameChange}/>
             </FormGroup>
             <Button type="submit" className='btn btn-primary btn-lg'>Add Task</Button>
           </Form>
         </Jumbotron>
-        <Button onClick={this.test}>Test button</Button>
         <Jumbotron>
           <Table className='text-center table table-primary'>
             <thead>

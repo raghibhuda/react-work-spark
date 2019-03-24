@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 import axios from 'axios';
-import { fetchTasksAction } from './actions';
+import { fetchTasksAction ,updateStoreAfterAddTask} from './actions';
 import { ADD_NEW_TASK, DELETE_TASK } from './constants';
 
 // Individual exports for testing
@@ -16,13 +16,14 @@ function getAllTasks() {
   return axios
     .post('http://127.0.0.1:8000/api/all-tasks', data, axiosConfig)
     .then(response => {
-      console.log(response.data);
       return response.data;
+    }).catch((error) => {
+      console.log(error);
     });
 }
 
 
-async function* addTaskRequest(task){
+async function addTaskRequest(task){
   let data = {
     name:task.data.name
   }
@@ -35,20 +36,18 @@ async function* addTaskRequest(task){
   };
 
   let response =  await axios.post('http://127.0.0.1:8000/api/create-task', data, axiosConfig).then((response)=>{
-                    console.log(response.data);
                     return response.data; 
+                  }).catch((error) => {
+                    console.log(error);
                   });
-  console.log(response);
   return response;                
 }
 
+
 export function* addTask(task){
   try{
-    const newTask = yield call(addTaskRequest,task);
-    
-    const data = yield call(getAllTasks);
-    const newwwwTask = data.newTask;
-    yield put(fetchTasksAction(newwwwTask));
+    let newTask = yield call(addTaskRequest,task); 
+    yield put(updateStoreAfterAddTask(newTask));
   }catch(error){
     console.log(error);
   }
@@ -57,7 +56,6 @@ export function* addTask(task){
 
 
 async function deleteTaskRequest(task){
-  console.log (task.data);
   let data = {
     id: task.data
   }
@@ -69,21 +67,25 @@ async function deleteTaskRequest(task){
     },
   };
 
-  let response = await axios.post('http://127.0.0.1:8000/api/delete-task', data , axiosConfig).then((response)=>{
-                return response.data });
+  let response = await axios.post('http://127.0.0.1:8000/api/delete-task', data , axiosConfig)
+                .then((response)=>{
+                    return response.data })
+                .catch((error) => {
+                    console.log(error);
+                });
   return response;
 }
+
+
 
 export function* deleteTask(task){
   try{
     yield call(deleteTaskRequest , task);
-    const data = yield call(getAllTasks);
-    const tasks = data.tasks;
-    yield put(fetchTasksAction(tasks));
   }catch(error){
     console.log(error);
   }
 }
+
 
 export default function* taskSaga() {
   // See example in containers/HomePage/saga.js
@@ -93,6 +95,7 @@ export default function* taskSaga() {
     yield put(fetchTasksAction(tasks));
     yield takeLatest(ADD_NEW_TASK,addTask);
     yield takeLatest(DELETE_TASK,deleteTask);
+  
   } catch (error) {
     console.log(error);
   }
