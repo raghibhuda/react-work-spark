@@ -1,7 +1,7 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 import axios from 'axios';
-import { fetchTasksAction ,updateStoreAfterAddTask} from './actions';
-import { ADD_NEW_TASK, DELETE_TASK } from './constants';
+import { fetchTasksAction ,updateStoreAfterAddTask, updateStoreEditTask} from './actions';
+import { ADD_NEW_TASK, DELETE_TASK, EDIT_TASK  } from './constants';
 
 // Individual exports for testing
 function getAllTasks() {
@@ -76,8 +76,6 @@ async function deleteTaskRequest(task){
   return response;
 }
 
-
-
 export function* deleteTask(task){
   try{
     yield call(deleteTaskRequest , task);
@@ -85,6 +83,40 @@ export function* deleteTask(task){
     console.log(error);
   }
 }
+
+async function editTaskRequest (task){
+  console.log(task, 'Got data ');
+  let data = {
+    id: task.data.id,  
+    name: task.data.name,  
+  }
+  const axiosConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Accept: 'application/json',
+    },
+  };
+  let response = await axios.post('http://127.0.0.1:8000/api/edit-task', data , axiosConfig)
+                .then((response)=>{
+                    return response.data })
+                .catch((error) => {
+                    console.log(error);
+                });
+  return response;
+}
+
+
+
+export function* editTask(data){
+  try{
+    let editedTask = yield call(editTaskRequest,data);
+    yield put(updateStoreEditTask(editedTask));
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 
 export default function* taskSaga() {
@@ -95,6 +127,7 @@ export default function* taskSaga() {
     yield put(fetchTasksAction(tasks));
     yield takeLatest(ADD_NEW_TASK,addTask);
     yield takeLatest(DELETE_TASK,deleteTask);
+    yield takeLatest(EDIT_TASK,editTask);
   
   } catch (error) {
     console.log(error);

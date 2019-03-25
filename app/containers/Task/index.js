@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { PropTypes } from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
@@ -15,7 +16,8 @@ import { Button , Jumbotron ,Form , FormGroup ,Input ,Table} from 'reactstrap';
 import makeSelectTask from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { fetchTasksAction, addNewTaskAction, deleteTaskAction } from './actions';
+import { fetchTasksAction, addNewTaskAction, deleteTaskAction , editTaskFunction } from './actions';
+
 
 
 /* eslint-disable react/prefer-stateless-function */
@@ -25,10 +27,12 @@ export class Task extends React.Component {
     this.state = {
       name: '',
       id: null,
+      showEditForm:false,
+      edited_name:'',
     };
     
   }
-  
+  //Task name change for add task
   handelTaskNameChange = (e) => {
     this.setState({
       name: e.target.value
@@ -46,10 +50,64 @@ export class Task extends React.Component {
     });
   }
 
+  //Delete task operation
   handleTaskDelete = (e) => {
     let id = e.target.value;
     this.props.deleteATask(id);
   }
+
+//Edit form change and submission functionality
+  handleEditFormView = (e) => {
+    e.preventDefault();
+    this.setState({
+      showEditForm: true
+    });
+    this.props.task.tasks.map((edit)=>{
+      if(e.target.value == edit.id){
+        this.setState({
+          edited_name:edit.name,
+          id: edit.id,
+        });
+      }
+    });
+  }
+
+  closeEditForm = (e) => {
+    e.preventDefault();
+    this.setState({showEditForm:false});
+  }
+
+  handleEditedName = (e) => {
+    this.setState({
+      edited_name:e.target.value
+    });
+  }
+
+  handleEditFormSubmit = (e) => {
+    e.preventDefault();
+    let data ={
+      name: this.state.edited_name,
+      id:this.state.id,
+    }
+    this.props.editTask(data);
+  }
+
+  editForm = () => {
+    return (
+      <div>
+        <h3>Edit task</h3>
+        <Form onSubmit={this.handleEditFormSubmit}>
+          <FormGroup>
+            <Input name='name' value={this.state.edited_name} onChange={this.handleEditedName}/> 
+          </FormGroup>
+          <Button type="submit" className='btn btn-success btn-lg'>Edit Task</Button>
+          <Button className='btn btn-primary btn-lg' onClick={this.closeEditForm}>Close</Button>
+        </Form>
+      </div>
+    ); 
+  }
+
+
   ///All task render UI
   renderTasks = () => {
     return this.props.task.tasks.map((data,key) => {
@@ -58,7 +116,7 @@ export class Task extends React.Component {
           <td >{data.id}</td>
           <td >{data.name}</td>
           <td >
-            <Button outline color="primary" >Edit</Button>
+            <Button outline color="primary" value={data.id}  onClick={this.handleEditFormView}>Edit</Button>
           </td>
           <td>
             <Button outline color="danger"  value={data.id} onClick={this.handleTaskDelete}>Delete</Button>
@@ -84,6 +142,7 @@ export class Task extends React.Component {
             <Button type="submit" className='btn btn-primary btn-lg'>Add Task</Button>
           </Form>
         </Jumbotron>
+        {this.state.showEditForm ? this.editForm() : ''}
         <Jumbotron>
           <Table className='text-center table table-primary'>
             <thead>
@@ -116,6 +175,7 @@ function mapDispatchToProps(dispatch) {
     showTasks: (data) => dispatch(fetchTasksAction(data)),
     addNewTask: (data) => dispatch(addNewTaskAction(data)),
     deleteATask: (taskID) => dispatch(deleteTaskAction(taskID)),
+    editTask: (data) => dispatch(editTaskFunction(data)),
   };
 }
 

@@ -4,7 +4,7 @@
  *
  */
 
-import { DEFAULT_ACTION, GET_ALL_TASKS,ADD_NEW_TASK, DELETE_TASK, UPDATE_STORE_AFTER_ADD_TASK } from './constants';
+import { DEFAULT_ACTION, GET_ALL_TASKS,ADD_NEW_TASK, DELETE_TASK, UPDATE_STORE_AFTER_ADD_TASK, EDIT_TASK ,UPDATE_STORE_AFTER_EDIT_TASK} from './constants';
 
 export function defaultAction() {
   return {
@@ -38,9 +38,24 @@ export function deleteTaskAction(data){
 }
 
 export function updateStoreAfterAddTask(data){
-  console.log(data,'Saga dev data');
   return {
     type: UPDATE_STORE_AFTER_ADD_TASK,
+    data
+  }
+}
+
+export function editTaskFunction(data){
+  console.log(data,'Edit tsk data');
+  return {
+    type: EDIT_TASK,
+    data
+  }
+}
+
+export function updateStoreEditTask(data){
+  console.log(data,'update store with edited task');
+  return {
+    type: UPDATE_STORE_AFTER_EDIT_TASK,
     data
   }
 }

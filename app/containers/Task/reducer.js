@@ -6,6 +6,7 @@
 
 import { fromJS } from 'immutable';
 import { DEFAULT_ACTION, GET_ALL_TASKS , DELETE_TASK, UPDATE_STORE_AFTER_ADD_TASK } from './constants';
+import { UPDATE_STORE_AFTER_EDIT_TASK } from './constants';
 
 
 export const initialState = fromJS({
@@ -24,27 +25,40 @@ function taskReducer(state = initialState, action) {
     }
     
     case UPDATE_STORE_AFTER_ADD_TASK:{
-      
       const tasks = fromJS( state.get('tasks'));
       let new_task = {
         id: action.data.task.id,
         name:action.data.task.name
       }
-      
       return state.set('tasks',tasks.insert(0,new_task));
     }
       
     case DELETE_TASK:{
-      const tasks = fromJS(state.get('tasks'));
+      
       for (const key in tasks.toJS()) {
         if (tasks.toJS()[key].id == action.data) {
           return state.set('tasks', tasks.deleteIn([key]));
         }
       }
       return state;
-      
     }
       
+    case UPDATE_STORE_AFTER_EDIT_TASK:{
+      const tasks = fromJS(state.get('tasks')); 
+      // console.log(tasks,'=================');
+      console.log(action.data.task,'++++++++++++++');
+      let edited_task = {
+        id: action.data.task.id,
+        name: action.data.task.name,
+      }
+      console.log(edited_task,'==================');
+      for (const key in tasks.toJS()) {
+        if (tasks.toJS()[key].id == action.data.task.id) {
+          return state.setIn('tasks',edited_task);
+        }
+      }
+      return state;
+    }
     default:
       return state;
   }
