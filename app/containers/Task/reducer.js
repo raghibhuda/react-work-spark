@@ -34,7 +34,7 @@ function taskReducer(state = initialState, action) {
     }
       
     case DELETE_TASK:{
-      
+      const tasks = fromJS(state.get('tasks'));
       for (const key in tasks.toJS()) {
         if (tasks.toJS()[key].id == action.data) {
           return state.set('tasks', tasks.deleteIn([key]));
@@ -45,19 +45,14 @@ function taskReducer(state = initialState, action) {
       
     case UPDATE_STORE_AFTER_EDIT_TASK:{
       const tasks = fromJS(state.get('tasks')); 
-      // console.log(tasks,'=================');
-      console.log(action.data.task,'++++++++++++++');
-      let edited_task = {
-        id: action.data.task.id,
-        name: action.data.task.name,
-      }
-      console.log(edited_task,'==================');
-      for (const key in tasks.toJS()) {
-        if (tasks.toJS()[key].id == action.data.task.id) {
-          return state.setIn('tasks',edited_task);
+      let allTasks = tasks.toJS();
+      let newName = action.data.task.name;
+      for (const key in allTasks){
+        if(allTasks[key].id === action.data.task.id){
+          allTasks[key] = {...allTasks[key],name:newName};
+          return state.set('tasks',allTasks);
         }
       }
-      return state;
     }
     default:
       return state;

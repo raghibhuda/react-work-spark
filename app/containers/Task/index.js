@@ -90,6 +90,7 @@ export class Task extends React.Component {
       id:this.state.id,
     }
     this.props.editTask(data);
+    this.setState({showEditForm:false});
   }
 
   editForm = () => {
