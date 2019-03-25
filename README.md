@@ -1,8 +1,8 @@
 # Work-Spark  
 
-##Simple Api based productivity app with Laravel, React, Redux, Redux-Saga ,Axios
+## Simple Api based productivity app with Laravel, React, Redux, Redux-Saga ,Axios
 
-All back-end logics and api endpoints are here. 
+All Fornt-end components ,  Api call and user interfaces are here !  
 
 [Work-Spark Back-end repository](https://github.com/raghibhuda/work-spark.git)
 
