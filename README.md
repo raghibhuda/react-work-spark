@@ -1,1 +1,16 @@
-A simple productivity app  with Laravel back end and react , redux , redux-saga , axios as fornt-end technology . 
+# Work-Spark  
+
+##Simple Api based productivity app with Laravel, React, Redux, Redux-Saga ,Axios
+
+All back-end logics and api endpoints are here. 
+
+[Work-Spark Back-end repository](https://github.com/raghibhuda/work-spark.git)
+
+*Features:*
+ - [x] User Authentication
+ - [x] User can perform CRUD operation on their Task
+ - [ ] User can perform CRUD operation on their upcoming Event   
+ - [ ] Showing weather data on forn-end app   
+ - [ ] User can add Pomodoro     
+ - [ ] User can keep track on reading books      
+ - [ ] View progress or habit statistics.   
